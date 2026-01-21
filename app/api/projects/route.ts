@@ -480,13 +480,34 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   await dbConnect();
   const session = await getSession(req as any);
-  console.log("asdfasdfe", session);
   if (!session) {
     return NextResponse.json({ success: false, message: "Unauthorized data" }, { status: 403 });
   }
 
+  // ✅ Allow admin, manager, engineer, AND client
+  if (!canAccess(session.role, ["admin", "manager", "engineer", "client"])) {
+    return NextResponse.json({ success: false, message: "Unauthorized role" }, { status: 403 });
+  }
+
   try {
-    const projects = await Project.find()
+    let query: any = {};
+
+    // 🔍 Filter based on role
+    if (session.role === "admin") {
+      // Admin sees all projects
+      query = {};
+    } else if (session.role === "manager") {
+      // Manager sees projects they manage OR are assigned to as engineer
+      query = { $or: [{ manager: session._id }, { engineers: session._id }] };
+    } else if (session.role === "engineer") {
+      // Engineer sees projects they are assigned to
+      query = { engineers: session._id };
+    } else if (session.role === "client") {
+      // Client sees projects where their email matches
+      query = { clientEmail: session.email };
+    }
+
+    const projects = await Project.find(query)
       .populate("manager engineers projectType")
       .sort({ createdAt: -1 });
 
