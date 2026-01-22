@@ -173,7 +173,7 @@
 
 // //     fileUrl: {
 // //       type: String,
-      
+
 // //     },
 
 // //     fileType: {
@@ -408,8 +408,23 @@ const PlanSchema = new Schema(
     },
 
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
 );
+
+// ✅ Virtual for flatter access (Compatibility with UI)
+PlanSchema.virtual('fileUrl').get(function () {
+  return this.file?.url;
+});
+PlanSchema.virtual('imageUrl').get(function () {
+  return this.file?.url;
+});
+PlanSchema.virtual('fileType').get(function () {
+  return this.file?.fileType;
+});
 
 /**
  * 🔐 Constraint:

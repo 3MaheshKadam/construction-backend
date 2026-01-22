@@ -124,14 +124,35 @@ export async function POST(req: Request) {
       uploadedBy: session._id,
     });
 
-  return NextResponse.json(
-  {
-    success: true,
-    message: "Plan uploaded successfully",
-    data: plan,
-  },
-  { status: 201 }
-);
+    // 🚀 SYNC with Project model (User reported missing plans in UI)
+    await Project.findByIdAndUpdate(projectId, {
+      $push: { plans: plan._id } // Pushing ID as per standard ref pattern
+    });
+
+    // Also push to a flat array if the UI needs the full object stored (redundancy check)
+    await Project.findByIdAndUpdate(projectId, {
+      $push: {
+        projectDocuments: {
+          fileName: title,
+          fileUrl: file.url,
+          url: file.url, // Legacy support
+          type: "plan",
+          fileType: file.fileType,
+          size: file.fileSize,
+          uploadedBy: session._id,
+          createdAt: new Date()
+        }
+      }
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Plan uploaded successfully",
+        data: plan,
+      },
+      { status: 201 }
+    );
 
   } catch (error) {
     console.error("CREATE PLAN ERROR:", error);

@@ -1,0 +1,16 @@
+{
+  "ORG_ID": "6970749147dd0fda26c35ca6",
+  "VENDOR_IDS": [
+    "6970749147dd0fda26c35ca9",
+    "6970749147dd0fda26c35cac"
+  ],
+  "USERS": {
+    "maheshkadam9298@gmail.com": "697073591df5eafbce15dc56",
+    "filament325@gmail.com": "697073591df5eafbce15dc59",
+    "testuser8447@example.com": "6970756da1a8c7c8b04e14fa",
+    "testuser3351@example.com": "697075b8a1a8c7c8b04e1504",
+    "bpranali420@gmail.com": "697076699889539d1049165c"
+  },
+  "PROJECT_TYPE_ID": "6970fdff48fb5fc4dbb76a5b",
+  "PROJECT_ID": "69710d51de0b4c42fcced356"
+}
